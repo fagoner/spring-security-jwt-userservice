@@ -1,7 +1,7 @@
 
 ## Spring Boot and Spring Security with JWT including Access and Refresh Tokens personal implementation
 
-This is the example: `userservice` from [AmigosCode](https://www.youtube.com/channel/UC2KfmYEM4KCuA1ZurravgYw)
+This is an implementation of `userservice` from [AmigosCode](https://www.youtube.com/channel/UC2KfmYEM4KCuA1ZurravgYw)
 
 The original example use JPA to connect with the database, this example use
  * Mybatis ORM
