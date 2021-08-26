@@ -4,7 +4,7 @@
 This is an implementation of `userservice` from [AmigosCode](https://www.youtube.com/channel/UC2KfmYEM4KCuA1ZurravgYw)
 
 The original example use JPA to connect with the database, this example use
- * Mybatis ORM
+ * Mybatis for JDBC
  * Mysql 8 Docker container
  * Java 11
  * (Maven) com.auth0 / java-jwt
