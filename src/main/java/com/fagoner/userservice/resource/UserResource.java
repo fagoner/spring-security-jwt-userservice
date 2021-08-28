@@ -10,10 +10,7 @@ import com.fagoner.userservice.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import org.springframework.util.MimeTypeUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +40,11 @@ public class UserResource {
         return userService.getUsers();
     }
 
+    @PostMapping("/user/save")
+    public String save() {
+        return "";
+    }
+
     @GetMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -55,7 +57,7 @@ public class UserResource {
                 String username = decodedJWT.getSubject();
                 User user = userService.getUser(username);
                 String access_token = JWT.create()
-                        .withSubject(user.getUsername())
+                        .withSubject(user.getUsername())w
                         .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", userService.getRolesByUserId(user.getId()).stream().map(Role::getName).collect(Collectors.toList()))

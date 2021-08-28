@@ -17,13 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -32,6 +31,15 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("error", "error in auth");
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.setStatus(UNAUTHORIZED.value());
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 
     @Override
@@ -45,8 +53,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-
-
         Algorithm algorithm = Algorithm.HMAC256("secret".getBytes(StandardCharsets.UTF_8));
         String access_token = JWT.create()
                 .withSubject(user.getUsername())
@@ -62,8 +68,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         /*response.setHeader("access_token", access_token);
         response.setHeader("refresh_token", refresh_token);*/
         Map<String, String> tokens = new HashMap<>();
-        tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
+        tokens.put("accessToken", access_token);
+        tokens.put("refreshToken", refresh_token);
+        tokens.put("username", user.getUsername());
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
